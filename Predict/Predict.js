@@ -28,7 +28,7 @@ class Predict {
       }
       message = message.split( ' ' ).filter(function ( str ) {
         var word = str.match(/(\w+)/);
-        return word && word[0].length > 2;
+        return word && word[0].length > 1;
       }).join( ' ' );
       message = message.split(" ");
 

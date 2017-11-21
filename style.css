@@ -30,6 +30,7 @@ ul{
   position: relative;
   display: block;
   padding: 5px;
+  margin: 3px;
   float: right;
   background-color: #BF4040;
   border-radius: 50px 50px 0 50px;

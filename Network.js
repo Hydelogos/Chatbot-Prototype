@@ -4,7 +4,7 @@ class Neuron{
     this.out = 1;
     this.weights = [];
     for(var i = 0; i < weights; i++){
-      var test = Math.random() * 1/1000;
+      var test = Math.random();
       if(test == 0){
         test+=0.1;
       }
@@ -151,19 +151,11 @@ class Network{
         this.backPropagateClass();
         this.checkForNan();
       }
-      for(var i = 0; i < data.length; i++){
+      /*for(var i = 0; i < data.length; i++){
         this.setInputAndResult(data[i][0], waiting[i]);
         this.hiddenClassCalculation();
         this.outputClassCalculation();
-        var indexGagnant = 0;
-        var resultStock = 0;
-        for(var o = 0; o < this.outputs.length; o++){
-          if(this.outputs[o].out > resultStock){
-            resultStock = this.outputs[o].out;
-            indexGagnant = o;
-          }
-        }
-        if(waiting[i].indexOf(1) == indexGagnant){
+        if(this.outputs[waiting[i].indexOf(1)].out >= 0.2){
           console.log("check");
           check += 1;
         }
@@ -171,7 +163,8 @@ class Network{
       console.log("---Fin---");
       if(check == data.length){
         wrong = false;
-      }
+      }*/
+      wrong = false;
       if(turns > 20 && wrong){
         return;
         this.reset();

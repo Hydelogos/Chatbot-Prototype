@@ -24,7 +24,7 @@
     $("ul").append("<li class='intelligence'> Bonjour, Je suis une IA, parles moi comme si tu venais de me rencontrer, au bout de 30 reponses que tu me donneras je tenterai de répondre par moi meme!</li>");
 
     $(document).keypress(function(event) {
-      if(event.charCode == 13 && $("input").val().replace(/\s/g,"").length > 2){
+      if(event.charCode == 13 && $("input").val().replace(/\s/g,"").length > 1){
         var myMessage = $("input").val();
         var number = 1;
         if($(".me").length){
