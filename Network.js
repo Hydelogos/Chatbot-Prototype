@@ -4,6 +4,15 @@ class Neuron{
     this.out = 1;
     this.weights = [];
     for(var i = 0; i < weights; i++){
+      var test = Math.random() * 1/1000;
+      if(test == 0){
+        test+=0.1;
+      }
+      this.weights.push(test);
+    }
+  }
+  updateWeightsNumber(number){
+    for(var i = 0; i < number; i++){
       var test = Math.random()/1000 ;
       if(test == 0){
         test+=0.1;
@@ -36,6 +45,14 @@ class Network{
     }
   }
 
+  updateOutputs(number){
+    for(var i = 0; i < this.hiddens.length; i++){
+      this.hiddens[i].updateWeightsNumber(number - this.outputs.length);
+    }
+    for(var i = 0; i < number - this.outputs.length; i++){
+      this.outputs.push(new Neuron(0));
+    }
+  }
 
   learn(input, expected, turns){
 
@@ -122,7 +139,7 @@ class Network{
     while(wrong){
       check = 0;
       turns += 1;
-      for(var i = 0; i < 100; i++){
+      for(var i = 0; i < 1000; i++){
         random = (Math.floor(Math.random() * (max - 0 + 1)) + 0);
         this.checkForNan();
         this.setInputAndResult(data[random][0], waiting[random]);
@@ -138,14 +155,25 @@ class Network{
         this.setInputAndResult(data[i][0], waiting[i]);
         this.hiddenClassCalculation();
         this.outputClassCalculation();
-        if(this.outputs[waiting[i].indexOf(1)].out > 0.5){
+        var indexGagnant = 0;
+        var resultStock = 0;
+        for(var o = 0; o < this.outputs.length; o++){
+          if(this.outputs[o].out > resultStock){
+            resultStock = this.outputs[o].out;
+            indexGagnant = o;
+          }
+        }
+        if(waiting[i].indexOf(1) == indexGagnant){
+          console.log("check");
           check += 1;
         }
       }
+      console.log("---Fin---");
       if(check == data.length){
         wrong = false;
       }
-      if(turns > 10 && wrong){
+      if(turns > 20 && wrong){
+        return;
         this.reset();
         turns = 0;
       }
@@ -184,8 +212,8 @@ class Network{
     }
 }
 
-  checkForNan(){
-    /*for(var i = 0; i < this.inputs.length; i++){
+  checkForNan(){/*
+    for(var i = 0; i < this.inputs.length; i++){
 
       if(isNaN(this.inputs[i].out)){
         console.log("input " + i + " est NaN");
@@ -209,7 +237,6 @@ class Network{
             console.log("output " + k + " est NaN");
             throw new Error("");
           }
-          console.log(this.outputs[k].out.toFixed(19));
         }
       }
     }*/
@@ -263,7 +290,7 @@ class Network{
     }
     this.hiddenClassCalculation();
     this.outputClassCalculation();
-    this.logResult();
+    return this.logResult();
   }
 
   hiddenClassCalculation(){
@@ -274,9 +301,9 @@ class Network{
       }
       inData += -this.bias[0].in * this.bias[0].weights[i];
       this.hiddens[i].in = inData;
-      if(inData < 0){
+      /*if(inData < 0){
         inData *= 0.01;
-      }
+      }*/
       this.hiddens[i].out = 1 / (1 - Math.exp(inData));
     }
   }
@@ -289,10 +316,10 @@ class Network{
       }
       inData += this.bias[0].in * this.bias[0].weights[i];
       this.hiddens[i].in = inData;
-      /*if(inData < 0){
-        inData *= 0.01;
+      if(this.hiddens[i].in == 0){
+        inData = -29999;
       }
-      this.hiddens[i].out = inData;*/
+      this.hiddens[i].out = inData;
       this.hiddens[i].out = (1/ (1 + Math.exp(-this.hiddens[i].in)))
     }
   }
@@ -488,7 +515,8 @@ class Network{
         result = i;
       }
     }
-    console.log("Je pense qu'il s'agit d'un " + this.classes[result]);
+    console.log(this.classes[result]);
+    return this.classes[result];
   }
 
 
