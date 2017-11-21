@@ -52,6 +52,9 @@ class Predict {
     if(this.responseDatabase.length < 30){
       this.actualAnswer = Math.floor(Math.random() * (this.responseDatabase.length - 1)); // we generate a random answer
       return this.responseDatabase[this.actualAnswer];
+      if(this.brain.outputs.length - this.responseDatabase.length > 5){
+        this.updateMyBrain();
+      }
     } else {
       if(!this.brain){ //if the neural network doesn't exist we create it
         console.log(this.trainingSample);
@@ -65,7 +68,7 @@ class Predict {
 
   //let's set the way our program will learn from inputs
   inputToLearn(message, response){
-    var expected = new Array(30 + 1).join('0').split('').map(parseFloat);
+    var expected = new Array(100 + 1).join('0').split('').map(parseFloat);
     expected[response] = 1;
     this.learnWords(message);
     message = message.replace(/'/g, " ");
@@ -121,6 +124,18 @@ class Predict {
       }
     }
     return this.brain.testClass(data);
+  }
+
+  saveDataBase(){
+    var jsonData = JSON.stringify({response: this.responseDatabase, word: this.wordDataBase, train: this.trainingSample}, null, 2);
+      function download(text, name, type) {
+          var a = document.createElement("a");
+          var file = new Blob([text], {type: type});
+          a.href = URL.createObjectURL(file);
+          a.download = name;
+          a.click();
+      }
+      download(jsonData, 'test.txt', 'text/plain');
   }
 
 }
