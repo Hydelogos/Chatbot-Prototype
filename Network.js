@@ -139,7 +139,7 @@ class Network{
     while(wrong){
       check = 0;
       turns += 1;
-      for(var i = 0; i < 1000; i++){
+      for(var i = 0; i < 10000; i++){
         random = (Math.floor(Math.random() * (max - 0 + 1)) + 0);
         this.checkForNan();
         this.setInputAndResult(data[random][0], waiting[random]);
@@ -508,9 +508,10 @@ class Network{
         result = i;
       }
     }
-    console.log(this.classes[result]);
     return this.classes[result];
   }
 
 
 }
+
+module.exports.network = function(inputs, hidden, outputs){return new Network(inputs, hidden, outputs)};

@@ -1,3 +1,5 @@
+var Network = require('../Network.js').network;
+
 class Predict {
   constructor(){
     this.actualMessage = "";
@@ -57,7 +59,6 @@ class Predict {
       }
     } else {
       if(!this.brain){ //if the neural network doesn't exist we create it
-        console.log(this.trainingSample);
         this.getABrain();
         this.train();
       }
@@ -94,7 +95,9 @@ class Predict {
   //train the neural network with the training samples we stored
   train(){
     if(!this.brain){
-      console.log("Error! No brain found!");
+      this.getABrain();
+      this.brain.setClasses(this.responseDatabase);
+      this.brain.trainClass(this.trainingSample);
     }else{
       this.brain.setClasses(this.responseDatabase);
       this.brain.trainClass(this.trainingSample);
@@ -139,3 +142,5 @@ class Predict {
   }
 
 }
+
+module.exports.predict = function(){return new Predict();};

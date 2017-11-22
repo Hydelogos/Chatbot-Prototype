@@ -1,0 +1,77 @@
+body{
+
+}
+
+#messages{
+  width: 96%;
+  height: 85vh;
+  border: 3px solid black;
+  border-radius: 3px;
+  overflow-y: auto;
+  font-size: 1.2em;
+}
+
+ul{
+  list-style: none;
+}
+
+.me{
+  clear:both;
+  padding: 5px;
+  margin: 3px;
+  float: left;
+  background-color: #39ACAC;
+  border-radius: 50px 50px 50px 0;
+  color: white;
+}
+
+.intelligence{
+  clear:both;
+  position: relative;
+  display: block;
+  padding: 5px;
+  margin: 3px;
+  margin-right: 10px;
+  float: right;
+  background-color: #BF4040;
+  border-radius: 50px 50px 0 50px;
+  color: white;
+}
+
+input{
+  width: 90%;
+  height: 45px;
+}
+
+#network{
+  position: absolute;
+  bottom: 0;
+  font-size: 2em;
+}
+
+
+.network{
+  position: relative;
+  border: 2px solid black;
+  border-radius: 15px;
+  width: 90%;
+  height: auto;
+}
+
+.output{
+  position: relative;
+  border: 2px solid black;
+  border-radius: 15px;
+  width: 90%;
+  height: auto;
+}
+
+.input{
+  color: white;
+  background-color: #8EB8E5;
+  position: relative;
+  border: 2px solid #3993DD;
+  border-radius: 50px;
+  width: 90%;
+  height: auto;
+}

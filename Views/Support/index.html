@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>title</title>
+    <link rel="stylesheet" href="./style.css">
+  </head>
+  <body>
+    <div id="messages">
+      <ul id="main">
+
+      </ul>
+    </div>
+    <input type="text" id="network" name="message" placeholder="ID du reseau à ajouter">
+    <div onclick="test()">GO!!</div>
+  </body>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+
+  <script>
+  var wait = false;
+    var socket = io.connect('http://localhost:8080');
+
+    $(document).keypress(function(event) {
+      if(event.charCode == 13 && $("input:focus").val().replace(/\s/g,"").length > 1 && !wait){
+        var myMessage = $("input:focus").val();
+        if($("input:focus").is("#network")){
+          socket.emit('addPredict', {id: myMessage});
+          $("#main").append("<li><ul data-id=" + myMessage + " class='network'><h3>"+ myMessage +"</h3><input type='text' class='outputtext' placeholder='Ajouter une sortie possible ou le code d un reseau entre deux *'></ul></li>");
+        }
+        if($("input:focus").is(".outputtext")){
+          socket.emit('addOutput', {networkId: $("input:focus").parent().data("id"), newOutput: myMessage});
+          $("input:focus").parent().append("<li><ul class='output'><h3>"+ myMessage +"</h3><input type='text' class='inputtext' placeholder='Ajouter des mots clés pouvant se trouver dans une seule et même phrase'></ul></li>");
+        }
+        if($("input:focus").is(".inputtext")){
+          var outputs = $("input:focus").parent().parent().parent().children("li").children(".output");
+          console.log(outputs);
+          console.log($("input:focus").parent());
+          socket.emit('addInputs', {networkId: $("input:focus").parent().parent().parent().data("id"), outputId: outputs.index($("input:focus").parent()),  inputs: [myMessage]});
+          $("input:focus").parent().append("<li class='input'>"+ myMessage +"</li>");
+        }
+        $("input:focus").val("");
+        var element = document.getElementById("messages");
+        element.scrollTop = element.scrollHeight;
+        wait = false;
+      }
+      if(event.charCode == 13 && $("input:focus").val().replace(/\s/g,"").length > 1 && wait){
+          var myMessage = $("input:focus").val();
+          socket.emit('get', {id: "#5365", message: myMessage});
+      }
+    });
+    socket.on('smartAnswer', function(data){
+      console.log(data.message);
+
+    });
+    socket.on('validate', function(data){
+      console.log(data.message);
+
+    });
+    socket.on('error', function(data){
+      alert(data.message);
+    });
+    function test(){
+      socket.emit('validate', {});
+      wait = true;
+    }
+
+  </script>
+
+</html>

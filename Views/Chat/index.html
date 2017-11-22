@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>title</title>
+    <link rel="stylesheet" href="./style.css">
+  </head>
+  <body>
+    <div id="messages">
+      <ul>
+
+      </ul>
+    </div>
+    <input type="text" id="network" name="message">
+  </body>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+
+  <script>
+  var wait = false;
+    var socket = io.connect('http://localhost:8080');
+    socket.on('news', function (data) {
+      console.log(data);
+      socket.emit('my other event', { my: 'data' });
+    });
+    $("ul").append("<li class='intelligence'> Bonjour, Je suis une IA, parles moi comme si tu venais de me rencontrer, au bout de 30 reponses que tu me donneras je tenterai de répondre par moi meme!</li>");
+
+    $(document).keypress(function(event) {
+      if(event.charCode == 13 && $("input").val().replace(/\s/g,"").length > 1 && !wait){
+        var myMessage = $("input").val();
+        var number = 1;
+        if($(".me").length){
+          number += $(".me").length;
+        }
+        $("ul").append("<li class='me'>" + number + ". " + myMessage + "</li>");
+        $("input").val("");
+        var element = document.getElementById("messages");
+        element.scrollTop = element.scrollHeight;
+        wait = true;
+        socket.emit('talk', {message: myMessage});
+      }
+    });
+    socket.on('answer', function(data){
+      $("ul").append("<li class='intelligence'>" + data.response + "</li>");
+      var element = document.getElementById("messages");
+      element.scrollTop = element.scrollHeight;
+      wait = false;
+    });
+
+  </script>
+
+</html>
