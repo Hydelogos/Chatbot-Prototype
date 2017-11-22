@@ -1,0 +1,33 @@
+body {
+    background-color: #4E598C;
+    color: white;
+}
+
+#answer{
+
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 2em;
+    color: white;
+    position: absolute;
+    top: 25vh;
+    text-align: center;
+    left: 25vw;
+    width: 50vw;
+	opacity: 0;
+}
+
+#me{
+    color: white;
+    font-family: 'Jura', sans-serif;
+    font-size: 1.6em;
+    position: absolute;
+    bottom: 5vh;
+    text-align: center;
+    left: 25vw;
+    width: 50vw;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    border-bottom: 1px solid lightgrey;
+}
+

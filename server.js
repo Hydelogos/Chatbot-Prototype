@@ -28,6 +28,10 @@ app.get('/support', function (req, res) {
   res.sendFile(__dirname + '/Views/Support/index.html');
 });
 
+ app.get('/client', function (req, res) {
+     res.sendFile(__dirname + '/Views/Client/index.html');
+ });
+
 
 io.on('connection', function (socket) {
   console.log("Nouveau connecte");

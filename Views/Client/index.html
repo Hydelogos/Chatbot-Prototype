@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>title</title>
+    <link rel="stylesheet" href="./client.css">
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans|Jura" rel="stylesheet">
+</head>
+<body>
+    <div id="answer"><p></p></div>
+    <input type="text" id="me">
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+<script>
+    var socket = io.connect('http://localhost:8080');
+
+    var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
+    var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList;
+    var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent;
+    var recognition = new webkitSpeechRecognition();
+    recognition.lang = "fr-FR";
+    recognition.continuous = true;
+    recognition.interimResults = false;
+    recognition.onresult = function(event) {
+        console.log(event.results[event.results.length - 1][0].transcript);
+        $("#me").val(event.results[event.results.length - 1][0].transcript);
+        socket.emit('get', {id: "#8888", message: event.results[event.results.length - 1][0].transcript});
+    }
+    recognition.start();
+	
+	socket.on('smartAnswer', function(data){
+		$("#answer").animate({
+			opacity: 0
+		}, 1000, function(){
+			$("#answer>p").text(data.message);
+			$("#answer").animate({
+				opacity: 1
+			}, 1000);
+		});
+	});
+
+    var colors = ["#4E598C", "#3B0D11", "#DB5461", "#3D5467", "#44BBA4", "#393E41", "#F26419", "#700353", "#6A8D73"];
+    var random = 0;
+
+    window.setInterval(function(){
+        var newRand = Math.floor(Math.random() * 8);
+        while(newRand == random){
+            newRand = Math.floor(Math.random() * 8);
+        }
+        random = newRand;
+        $("body").animate({
+            backgroundColor: colors[random]
+        }, 3000);
+    }, 5000);
+
+</script>
+
+</html>
