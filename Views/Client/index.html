@@ -19,6 +19,8 @@
 <script>
     var socket = io.connect('http://localhost:8080');
 
+    var wordToExplain = {id : 0};
+
     var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
     var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList;
     var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent;
@@ -29,10 +31,16 @@
     recognition.onresult = function(event) {
         console.log(event.results[event.results.length - 1][0].transcript);
         $("#me").val(event.results[event.results.length - 1][0].transcript);
-        socket.emit('get', {id: "#8888", message: event.results[event.results.length - 1][0].transcript});
+        if(!wordToExplain.id){
+          socket.emit('get', {id: "#8888", message: event.results[event.results.length - 1][0].transcript});
+        }else{
+          console.log("coucou");
+          socket.emit('answer', {id: wordToExplain.id, word: wordToExplain.word, message: event.results[event.results.length - 1][0].transcript});
+          wordToExplain = {id : 0};
+        }
     }
     recognition.start();
-	
+
 	socket.on('smartAnswer', function(data){
 		$("#answer").animate({
 			opacity: 0
@@ -43,6 +51,31 @@
 			}, 1000);
 		});
 	});
+  socket.on('unknown', function(data){
+    wordToExplain.word = data.word;
+    wordToExplain.id = data.id;
+		$("#answer").animate({
+			opacity: 0
+		}, 1000, function(){
+			$("#answer>p").text("Qu'est ce que " + data.word + " ?");
+			$("#answer").animate({
+				opacity: 1
+			}, 1000);
+		});
+	});
+
+  $(document).keypress(function(event) {
+    if(event.charCode == 13 && $("input:focus").val().replace(/\s/g,"").length > 1){
+      var myMessage = $("input:focus").val();
+      if(!wordToExplain.id){
+        socket.emit('get', {id: "#8888", message: myMessage});
+      }else{
+        console.log("coucou");
+        socket.emit('answer', {id: wordToExplain.id, word: wordToExplain.word, message: myMessage});
+        wordToExplain = {id : 0};
+      }
+    }
+  });
 
     var colors = ["#4E598C", "#3B0D11", "#DB5461", "#3D5467", "#44BBA4", "#393E41", "#F26419", "#700353", "#6A8D73"];
     var random = 0;

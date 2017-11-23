@@ -7,7 +7,6 @@ class Predict {
     this.wordDataBase = [];
     this.responseDatabase = [];
     this.badWordsDatabase = [];
-
     this.brain = null;
 
     this.trainingSample = [];
@@ -15,14 +14,14 @@ class Predict {
 
     //create ignorable wordDataBase
 
-    this.badWordsDatabase.push("mon", "ton", "son", "notre", "votre", "leur", "ils", "nous", "vous", "elle", "ses", "mes");
+    this.badWordsDatabase.push("mon", "ton", "son", "notre", "votre", "leur", "ils", "nous", "vous", "elle", "ses", "mes", "un", "une", "le", "la", "des", "les");
 
 
 
-  }
+
 
   //learn words with a limit of 100 in our database
-  learnWords(message){
+  this.learnWords = function(message){
     if(this.wordDataBase.length < 101){
       message = message.replace(/'/g, " ");
       for(var i = 0; i < this.badWordsDatabase.length; i++){
@@ -40,13 +39,13 @@ class Predict {
         }
       }
     }
-  }
+  };
 
-  learnResponse(message){
+  this.learnResponse = function(message){
     this.responseDatabase.push(message);
-  }
+  };
 
-  talk(message){
+  this.talk = function(message){
     this.learnResponse(message);
     if(this.actualAnswer != -1){
       this.inputToLearn(this.responseDatabase[this.actualAnswer], this.responseDatabase.length - 1); //we learn what answer we can give to a message
@@ -65,10 +64,10 @@ class Predict {
       var intelligentAnswer = this.test(message);
       return intelligentAnswer;
     }
-  }
+  };
 
   //let's set the way our program will learn from inputs
-  inputToLearn(message, response){
+  this.inputToLearn = function(message, response){
     var expected = new Array(100 + 1).join('0').split('').map(parseFloat);
     expected[response] = 1;
     this.learnWords(message);
@@ -85,15 +84,15 @@ class Predict {
         }
       }
     this.trainingSample.push([data, expected]);
-  }
+  };
 
   //create the neural network
-  getABrain(){
+  this.getABrain = function(){
     this.brain = new Network(100, 100 + this.responseDatabase.length, this.responseDatabase.length );
-  }
+  };
 
   //train the neural network with the training samples we stored
-  train(){
+  this.train = function(){
     if(!this.brain){
       this.getABrain();
       this.brain.setClasses(this.responseDatabase);
@@ -103,17 +102,20 @@ class Predict {
       this.brain.trainClass(this.trainingSample);
 
     }
-  }
+  };
 
   //update the answers possibilities in the neural network
-  updateMyBrain(){
+  this.updateMyBrain = function(){
     this.brain.updateOutputs(this.responseDatabase.length);
     this.brain.setClasses(this.responseDatabase);
     this.brain.trainClass(this.trainingSample);
-  }
+  };
 
   //test what the network would answer to a message
-  test(message){
+  this.test = function(message){
+    if(!this.brain){
+      this.getABrain();
+    }
     message = message.replace(/'/g, " ");
     message = message.split( ' ' ).filter(function ( str ) {
       var word = str.match(/(\w+)/);
@@ -126,19 +128,19 @@ class Predict {
         data[this.wordDataBase.indexOf(message[i])] += 1;
       }
     }
-    return this.brain.testClass(data);
-  }
-
-  saveDataBase(){
-    var jsonData = JSON.stringify({response: this.responseDatabase, word: this.wordDataBase, train: this.trainingSample}, null, 2);
-      function download(text, name, type) {
-          var a = document.createElement("a");
-          var file = new Blob([text], {type: type});
-          a.href = URL.createObjectURL(file);
-          a.download = name;
-          a.click();
+    var check = false;
+    for(var i = 0; i < data.length; i++){
+      if(data[i]){
+        check = true;
       }
-      download(jsonData, 'test.txt', 'text/plain');
+    }
+    if(check){
+      return this.brain.testClass(data);
+    } else {
+      return false;
+    }
+  };
+
   }
 
 }

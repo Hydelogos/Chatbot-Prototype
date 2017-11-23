@@ -12,7 +12,7 @@
       </ul>
     </div>
     <input type="text" id="network" name="message" placeholder="ID du reseau à ajouter">
-    <div onclick="test()">GO!!</div>
+    <div onclick="test()">GO!!</div><div onclick="save()">Save</div><div onclick="load()">Load</div>
   </body>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -21,6 +21,27 @@
   <script>
   var wait = false;
     var socket = io.connect('http://localhost:8080');
+
+	socket.on('load', function(data){
+    console.log(data);
+		for(var key in data.dataBase){
+			$("#main").append("<li><ul data-id=" + key + " class='network'><h3>"+ key +"</h3><input type='text' class='outputtext' placeholder='Ajouter une sortie possible ou le code d un reseau entre deux *'></ul></li>");
+			for(var key2 in data.dataBase[key].responseDatabase){
+				$(".network[data-id='"+key+"']").append("<li><ul class='output'><h3>"+ data.dataBase[key].responseDatabase[key2] +"</h3><input type='text' class='inputtext' placeholder='Ajouter des mots clés pouvant se trouver dans une seule et même phrase'></ul></li>");
+				for(var key3 in data.dataBase[key].trainingSample){
+					if(data.dataBase[key].trainingSample[key3][1].indexOf(1) == data.dataBase[key].responseDatabase.indexOf(data.dataBase[key].responseDatabase[key2])){
+						var words = "";
+						for(var id in data.dataBase[key].trainingSample[key3][0]){
+							if(data.dataBase[key].trainingSample[key3][0][id] == 1){
+								words += data.dataBase[key].wordDataBase[id];
+							}
+						}
+					}
+					$(".network[data-id='"+key+"']").children("li").last().children("ul").append("<li class='input'>"+ words +"</li>");
+				}
+			}
+		}
+	});
 
     $(document).keypress(function(event) {
       if(event.charCode == 13 && $("input:focus").val().replace(/\s/g,"").length > 1 && !wait){
@@ -63,7 +84,13 @@
     });
     function test(){
       socket.emit('validate', {});
-      wait = true;
+      wait = false;
+    }
+    function save(){
+      socket.emit('save', {});
+    }
+    function load(){
+      socket.emit('load', {});
     }
 
   </script>

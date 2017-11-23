@@ -10,8 +10,8 @@ class Neuron{
       }
       this.weights.push(test);
     }
-  }
-  updateWeightsNumber(number){
+
+  this.updateWeightsNumber = function(number){
     for(var i = 0; i < number; i++){
       var test = Math.random()/1000 ;
       if(test == 0){
@@ -19,6 +19,7 @@ class Neuron{
       }
       this.weights.push(test);
     }
+  }
   }
 }
 
@@ -43,84 +44,29 @@ class Network{
     for(var i = 0; i < output; i++){
       this.outputs.push(new Neuron(0));
     }
-  }
 
-  updateOutputs(number){
+
+  this.updateOutputs = function(number){
     for(var i = 0; i < this.hiddens.length; i++){
       this.hiddens[i].updateWeightsNumber(number - this.outputs.length);
     }
     for(var i = 0; i < number - this.outputs.length; i++){
       this.outputs.push(new Neuron(0));
     }
+    this.reset();
+    console.log("outputs " +this.classes);
   }
 
-  learn(input, expected, turns){
 
-      this.target = expected;
-      for(var i = 0; i < this.inputs.length; i++){
-        this.inputs[i].out = (1-0) * (input[i]-Math.min(input)) / (Math.max(input)-Math.min(input)) + 0;
-      }
-      for(var i = 0; i < turns; i++){
-        this.hiddenCalculation();
-        this.outputCalculation();
-        this.backPropagate();
-      }
-      this.logResult();
-  }
 
-  setClasses(classes){
+  this.setClasses = function(classes){
     this.classes = classes;
   }
 
-  train(data){
-    var random = 0;
-    var max = data.length - 1;
-    var wrong = true;
-    var check = 0;
-    var turns = 0;
-    console.log(data[1][0]);
-
-    for(var i = 0; i < 10000; i++){
-
-      while(wrong){
-        check = 0;
-        turns += 1;
-        for(var i = 0; i < 100000; i++){
-          random = (Math.floor(Math.random() * (max - 0 + 1)) + 0);
-          this.checkForNan();
-          this.setInputAndResult(data[random][0], data[random][1]);
-          this.hiddenCalculation();
-          this.outputCalculation();
-          this.backPropagate();
-        }
-        for(var i = 0; i < data.length; i++){
-          var verif = true;
-          this.setInputAndResult(data[i][0], data[i][1]);
-          this.hiddenCalculation();
-          this.outputCalculation();
-          for(var y = 0; y < this.outputs.length; y++){
-            if( this.outputs[y].out - (data[i][1][y]/35) > 0.005  || this.outputs[y].out - (data[i][1][y]/35) < -0.005){
-              verif = false;
-            }
-          }
-          if( verif ){
-            check += 1;
-        }
-        if(check == data.length){
-          wrong = false;
-        }
-        if(turns > 150 && wrong){
-          this.reset();
-          turns = 0;
-        }
-        wrong = false;
-      }
-    }
-  }
-}
 
 
-  trainClass(data){
+
+  this.trainClass = function(data){
     var random = 0;
     var max = data.length - 1;
     var wrong = true;
@@ -173,31 +119,31 @@ class Network{
     }
   }
 
-  reset(){
+  this.reset = function(){
     var test = 0;
     for(var i = 0; i < this.inputs.length; i++){
 
 
       for(var j = 0; j < this.hiddens.length; j++){
-        test = (Math.floor(Math.random() * (5 - (-5) + 1)) -5);
+        test = Math.random();
         if(test == 0){
-          test+=1;
+          test+=0.1;
         }
         this.inputs[i].weights[j] = test;
-        test = (Math.floor(Math.random() * (5 - (-5) + 1)) -5);
+        test = Math.random();
         if(test == 0){
-          test+=1;
+          test+=0.1;
         }
         this.bias[0].weights[j] = test;
         for(var k = 0; k < this.outputs.length; k++){
-          test = (Math.floor(Math.random() * (5 - (-5) + 1)) -5);
+          test = Math.random();
           if(test == 0){
-            test+=1;
+            test+=0.1;
           }
           this.hiddens[j].weights[k] = test;
-          test = (Math.floor(Math.random() * (5 - (-5) + 1)) -5);
+          test = Math.random();
           if(test == 0){
-            test+=1;
+            test+=0.1;
           }
           this.bias[1].weights[k] = test;
         }
@@ -205,7 +151,7 @@ class Network{
     }
 }
 
-  checkForNan(){/*
+  this.checkForNan = function(){/*
     for(var i = 0; i < this.inputs.length; i++){
 
       if(isNaN(this.inputs[i].out)){
@@ -235,7 +181,7 @@ class Network{
     }*/
   }
 
-  setInputAndResult(input, expected){
+  this.setInputAndResult = function(input, expected){
     var max = 300;
     var min = 0;
     var normalized = []
@@ -246,7 +192,7 @@ class Network{
     }
   }
 
-  learnClass(input, expected, turns){
+  this.learnClass = function(input, expected, turns){
       this.target = expected;
       for(var i = 0; i < this.inputs.length; i++){
         this.inputs[i].in = input[i];
@@ -263,20 +209,9 @@ class Network{
       this.logResult();
   }
 
-  test(input){
-    var max = 300;
-    var min = 0;
-    for(var i = 0; i < this.inputs.length; i++){
-      this.inputs[i].out = (1-0) * (input[i]-min) / (max-min) + 0;
-        this.inputs[i].in = (1-0) * (input[i]-min) / (max-min) + 0;
-    }
-    this.hiddenCalculation();
-    this.outputCalculation();
-    var result = this.getResult();
-    return result;
-  }
 
-  testClass(input){
+
+  this.testClass = function(input){
     for(var i = 0; i < this.inputs.length; i++){
       this.inputs[i].in = input[i];
       this.inputs[i].out = input[i];
@@ -286,7 +221,7 @@ class Network{
     return this.logResult();
   }
 
-  hiddenClassCalculation(){
+  this.hiddenClassCalculation = function(){
     for(var i = 0; i < this.hiddens.length; i ++){
       var inData = 0;
       for(var y = 0; y < this.inputs.length; y++){
@@ -301,23 +236,9 @@ class Network{
     }
   }
 
-  hiddenCalculation(){
-    for(var i = 0; i < this.hiddens.length; i ++){
-      var inData = 0;
-      for(var y = 0; y < this.inputs.length; y++){
-        inData += this.inputs[y].weights[i] * this.inputs[y].out;
-      }
-      inData += this.bias[0].in * this.bias[0].weights[i];
-      this.hiddens[i].in = inData;
-      if(this.hiddens[i].in == 0){
-        inData = -29999;
-      }
-      this.hiddens[i].out = inData;
-      this.hiddens[i].out = (1/ (1 + Math.exp(-this.hiddens[i].in)))
-    }
-  }
 
-  outputClassCalculation(){
+
+  this.outputClassCalculation = function(){
     var sumExp = 0;
     var max = 0;
     for(var i = 0; i < this.outputs.length; i ++){
@@ -344,80 +265,22 @@ class Network{
 
   }
 
-  outputCalculation(){
-    for(var i = 0; i < this.outputs.length; i ++){
-      var inData = 0;
-      for(var y = 0; y < this.hiddens.length; y++){
-        inData += this.hiddens[y].weights[i] * this.hiddens[y].out;
-      }
-      this.outputs[i].in = inData;
-      this.outputs[i].out = (1/ (1 + Math.exp(-this.outputs[i].in)));
-    }
-  }
 
-  errorCalculation(){
-    this.error = 0;
-    for(var i = 0; i < this.outputs.length; i ++){
-      this.error += ((Math.pow(this.target[i] - this.outputs[i].out), 2)/2);
-    }
-  }
 
-  backPropagate(){
-    this.hiddenToInput();
-    this.outputToHidden();
-  }
 
-  backPropagateClass(){
+
+
+
+  this.backPropagateClass = function(){
     this.hiddenToInputClass();
     this.outputToHiddenClass();
   }
 
-  hiddenToInput(){
-    for(var i = 0; i < this.inputs.length; i++){
-      var tiers1 = 0;
-      var tiers2 = 0;
-      var tiers3 = 0;
-      var tiersBias = 0;
-      var final = 0;
-      var finalBias = 0;
-      for(var j = 0; j < this.hiddens.length; j++){
-        tiers1 = 0;
-        for(var k = 0; k < this.outputs.length; k++){
-          tiers1 += ((0.5 * Math.pow(this.target[k] - this.outputs[k].out, 2)) * (this.outputs[k].out * (1 - this.outputs[k].out))) * this.hiddens[j].weights[k];
-        }
-        tiers2 = this.hiddens[j].out * (1 - this.hiddens[j].out);
-        tiers3 = this.inputs[i].out;
-        tiersBias = this.bias[0].out;
-        final = tiers1 * tiers2 * tiers3;
-        finalBias = tiers1 * tiers2 * tiersBias;
-        this.inputs[i].weights[j] = this.inputs[i].weights[j] - (this.learningRate * final);
-        this.bias[0].weights[j] = this.bias[0].weights[j] - (this.learningRate * finalBias);
-      }
-    }
-  }
 
-  outputToHidden(){
-    for(var i = 0; i < this.hiddens.length; i++){
-      var tiers1 = 0;
-      var tiers2 = 0;
-      var tiers3 = 0;
-      var tiersBias = 0;
-      var final = 0;
-      var finalBias = 0;
-      for(var j = 0; j < this.outputs.length; j++){
-        tiers1 = this.outputs[j].out - this.target[j];
-        tiers2 = this.outputs[j].out * (1 - this.outputs[j].out);
-        tiers3 = this.hiddens[i].out;
-        tiersBias = this.bias[1].out;
-        final = tiers1 * tiers2 * tiers3;
-        finalBias = tiers1 * tiers2 * tiersBias;
-        this.hiddens[i].weights[j] = this.hiddens[i].weights[j] - (this.learningRate * final);
-        this.bias[1].weights[j] = this.bias[1].weights[j] - (this.learningRate * finalBias);
-      }
-    }
-  }
 
-  hiddenToInputClass(){
+
+
+  this.hiddenToInputClass = function(){
     /*var sumExp = 0;
     for(var k = 0; k < this.outputs.length; k++){
       sumExp += Math.exp(this.outputs[k].in);
@@ -457,7 +320,7 @@ class Network{
     }
   }
 
-  outputToHiddenClass(){
+  this.outputToHiddenClass = function(){
     /*var sumExp = 0;
     for(var k = 0; k < this.outputs.length; k++){
       sumExp += Math.exp(this.outputs[k].in);
@@ -491,7 +354,7 @@ class Network{
     }
   }
 
-  getResult(){
+  this.getResult = function(){
     var result = [];
     for(var i = 0; i < this.outputs.length; i++){
       result.push(this.outputs[i].out * 35);
@@ -499,7 +362,7 @@ class Network{
     return result;
   }
 
-  logResult(){
+  this.logResult = function(){
     var test = 0;
     var result = 0;
     for(var i = 0; i < this.outputs.length; i++){
@@ -510,7 +373,7 @@ class Network{
     }
     return this.classes[result];
   }
-
+  }
 
 }
 
